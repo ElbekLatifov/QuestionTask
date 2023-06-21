@@ -11,15 +11,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<MongoService>();
 builder.Services.AddScoped<QuestionManager>();
+builder.Services.AddHostedService<SendQuestionsServiceBack>();
 
 var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
 
-
+app.UseStaticFiles();
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
 app.MapControllers();
