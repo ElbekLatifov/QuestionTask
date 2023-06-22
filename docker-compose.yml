@@ -1,16 +1,8 @@
-version: '3.8'
+version: '3.7'
 
 services:
-  task_api:
-    image: task_image
-    container_name: task_api
-    ports:
-      - "7025:80"
-    build:
-      context: .
-      dockerfile: Dockerfile
 
-  mongo_db:
+  mongodb:
     image: mongo:latest
     container_name: mongo_db
     restart: always

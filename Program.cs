@@ -11,15 +11,23 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<MongoService>();
 builder.Services.AddScoped<QuestionManager>();
+builder.Services.AddScoped<QuestionManagerr>();
 builder.Services.AddHostedService<SendQuestionsServiceBack>();
+builder.Services.AddScoped<FileService>();
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
 
 app.UseStaticFiles();
-app.UseHttpsRedirection();
+
 app.UseAuthorization();
 
 app.MapControllers();

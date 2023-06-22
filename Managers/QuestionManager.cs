@@ -8,11 +8,13 @@ namespace QuestionTask.Managers;
 
 public class QuestionManager
 {
+    private readonly FileService fileService;
     private MongoService _mongoService;
 
-    public QuestionManager(MongoService mongoService)
+    public QuestionManager(MongoService mongoService, FileService fileService)
     {
         _mongoService = mongoService;
+        this.fileService = fileService;
     }
 
     public async Task<List<Question>> GetQuestions()
@@ -56,7 +58,7 @@ public class QuestionManager
             throw new Exception("     Takoy question no exist     ");
         }
 
-        question.Photo = FileService.SaveQuestionPhoto(photo);
+        question.Photo = await fileService.SaveQuestionPhoto(photo);
         await _mongoService._questions.ReplaceOneAsync(filter, question);
 
         return question.Photo;
@@ -91,5 +93,57 @@ public class QuestionManager
         }
 
         await _mongoService._questions.DeleteOneAsync(filter);
+    }
+
+    public async Task<Result> GetResult(long userid)
+    {
+        var result = await(await _mongoService._results.FindAsync(p=>p.UserId == userid)).FirstOrDefaultAsync();
+
+        return result;
+    }
+
+    public async Task PlusResult(long userid)
+    {
+        var result = await (await _mongoService._results.FindAsync(p => p.UserId == userid)).FirstOrDefaultAsync();
+        result.CorrectCount++;
+        await _mongoService._results.ReplaceOneAsync(p=>p.UserId == userid, result);    
+    }
+
+    public async Task MinusResult(long userid)
+    {
+        var result = await (await _mongoService._results.FindAsync(p => p.UserId == userid)).FirstOrDefaultAsync();
+        result.InCorrectCount++;
+        await _mongoService._results.ReplaceOneAsync(p => p.UserId == userid, result);
+    }
+
+    public async Task CheckAnswer(long userid, string[] answer)
+    {
+        var result = await (await _mongoService._results.FindAsync(p => p.UserId == userid)).FirstOrDefaultAsync();
+
+        var question = await(await _mongoService._questions.FindAsync(p=>p.Id == Guid.Parse(answer[0]))).FirstOrDefaultAsync();
+
+        if (question.Choises[int.Parse(answer[1])].IsAnswer)
+        {
+            await PlusResult(userid);
+        }
+        else
+        {
+            await MinusResult(userid);
+        }
+    }
+
+    public async Task GetUser(long userid)
+    {
+        var result = await (await _mongoService._results.FindAsync(p => true)).ToListAsync();
+
+        if(!result.Any(p => p.UserId == userid))
+        {
+            var b = new Result()
+            {
+                UserId = userid
+            };
+
+            await _mongoService._results.InsertOneAsync(b);
+        }
     }
 }

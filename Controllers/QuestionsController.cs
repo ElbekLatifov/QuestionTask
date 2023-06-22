@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using QuestionTask.Managers;
 using QuestionTask.Models;
-using System.Net;
+using Telegram.Bot;
+using Telegram.Bot.Types;
 
 namespace QuestionTask.Controllers;
 
@@ -30,7 +31,7 @@ public class QuestionsController : ControllerBase
         return Ok(question);
     }
 
-    [HttpPost("/addphotoToQuestion")]
+    [HttpPost("AddphotoToQuestion")]
     public async Task<IActionResult> AddPhoto([FromForm] Media photo)
     {
         var path = await questionManager.AddPhotoToQuestion(photo.QuestionId, photo.Photo);
@@ -56,5 +57,36 @@ public class QuestionsController : ControllerBase
     {
         await questionManager.DeleteQuestion(id);
         return Ok("Deleted");
+    }
+
+    [HttpPost("/bot")]
+    public async Task GetUpdate([FromBody] Update update)
+    {
+        var bot = new TelegramBotClient("6034108179:AAE0JCP4SdwliEATcogsAFFszPa8yblcEcg");
+        //                               6034108179:AAE0JCP4SdwliEATcogsAFFszPa8yblcEcg
+        if(update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
+        {
+            var javob = update.Message!.Text;
+
+            await bot.SendTextMessageAsync(update.Message!.From!.Id, "For You Question in hour");
+
+            await questionManager.GetUser(update.Message!.From!.Id);
+
+            if(javob == "/result")
+            {
+                var result = await questionManager.GetResult(update.Message!.From!.Id);
+
+                await bot.SendTextMessageAsync(update.Message!.From!.Id, $"Corrects: {result.CorrectCount}, InCorrects: {result.InCorrectCount}");
+            }
+        }
+
+        if (update.Type == Telegram.Bot.Types.Enums.UpdateType.CallbackQuery)
+        {
+            var javob = update.CallbackQuery!.Data;
+            
+            string[] data = javob!.Split(',').ToArray();
+
+            await questionManager.CheckAnswer(update.CallbackQuery.From.Id, data);
+        }
     }
 }

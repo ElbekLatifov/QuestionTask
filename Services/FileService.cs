@@ -3,31 +3,32 @@
 public class FileService
 {
     private const string FolderName = "wwwroot";
-    private static void CheckFileExist(string filePath)
+    private void CheckFileExist(string filePath)
     {
-        if (!Directory.Exists(filePath))
+        string path = Path.Combine(FolderName, filePath);
+
+        if (!Directory.Exists(path))
         {
-           Directory.CreateDirectory(filePath);
+           Directory.CreateDirectory(path);
         }
     }
 
-    public static string SaveQuestionPhoto(IFormFile file)
+    public async Task<string> SaveQuestionPhoto(IFormFile file)
     {
-        return SaveFile(file, "Photos");
+        return await SaveFile(file, "Photos");
     }
 
-    private static string SaveFile(IFormFile file, string folder)
+    private async Task<string> SaveFile(IFormFile file, string folder)
     {
-        CheckFileExist(Path.Combine(FolderName, folder));
+        CheckFileExist(folder);
         var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
-        
 
-            using (var ms = new MemoryStream())
-            {
-                file.CopyToAsync(ms);
-                File.WriteAllBytesAsync(Path.Combine(FolderName, folder, fileName), ms.ToArray());
-            }
+        using (var ms = new MemoryStream())
+        {
+            await file.CopyToAsync(ms);
+            await File.WriteAllBytesAsync(Path.Combine(FolderName, folder, fileName), ms.ToArray());
+        }
 
-            return $"/{folder}/{fileName}";
+        return $"/{folder}/{fileName}";
     }
 }

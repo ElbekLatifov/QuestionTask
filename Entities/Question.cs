@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Formatters;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson.Serialization.Attributes;
 
 namespace QuestionTask.Entities;
 
@@ -14,6 +13,8 @@ public class Question
 
 public class Choise
 {
+    [BsonId]
+    public Guid Id { get; set; }
     public required string Text { get; set; }
     public bool IsAnswer { get; set; }
 }
