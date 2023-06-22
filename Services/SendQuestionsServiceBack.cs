@@ -38,7 +38,7 @@ public class SendQuestionsServiceBack : BackgroundService
 
         using (var scope = _serviceProvider.CreateScope())
         {
-            var questionManager = scope.ServiceProvider.GetRequiredService<QuestionManagerr>();
+            var questionManager = scope.ServiceProvider.GetRequiredService<QuestionManager2>();
             await questionManager.Get(botClient, long.Parse(chatId));
         }
     }

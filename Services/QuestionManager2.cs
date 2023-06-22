@@ -8,11 +8,11 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace QuestionTask.Services;
 
-public class QuestionManagerr
+public class QuestionManager2
 {
     private readonly MongoService _mongoService;
 
-    public QuestionManagerr(MongoService mongoService)
+    public QuestionManager2(MongoService mongoService)
     {
         _mongoService = mongoService;
     }

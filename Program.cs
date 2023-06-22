@@ -11,9 +11,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<MongoService>();
 builder.Services.AddScoped<QuestionManager>();
-builder.Services.AddScoped<QuestionManagerr>();
+builder.Services.AddScoped<QuestionManager2>();
 builder.Services.AddHostedService<SendQuestionsServiceBack>();
 builder.Services.AddScoped<FileService>();
+builder.Services.AddControllers().AddNewtonsoftJson();
 
 var app = builder.Build();
 
