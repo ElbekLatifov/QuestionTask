@@ -63,7 +63,7 @@ public class QuestionsController : ControllerBase
     public async Task GetUpdate([FromBody] Update update)
     {
         var bot = new TelegramBotClient("6034108179:AAE0JCP4SdwliEATcogsAFFszPa8yblcEcg");
-        //                               6034108179:AAE0JCP4SdwliEATcogsAFFszPa8yblcEcg
+
         if(update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
         {
             var javob = update.Message!.Text;
