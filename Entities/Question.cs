@@ -13,8 +13,6 @@ public class Question
 
 public class Choise
 {
-    [BsonId]
-    public Guid Id { get; set; }
     public required string Text { get; set; }
     public bool IsAnswer { get; set; }
 }

@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using QuestionTask.Entities;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -7,21 +8,20 @@ namespace QuestionTask.Services;
 
 public class QuestionManager2
 {
-    private readonly MongoService _mongoService;
-
-    public QuestionManager2(MongoService mongoService)
-    {
-        _mongoService = mongoService;
-    }
+    private IMongoClient mongo = new MongoClient("mongodb://elbek:elbek@localhost:27017");
+    private IMongoDatabase database => mongo.GetDatabase("Tasklar");
+    public IMongoCollection<Question> _questions => database.GetCollection<Question>("questions");
+    public IMongoCollection<Result> _results => database.GetCollection<Result>("results");
 
     public async Task Get(ITelegramBotClient bot)
     {
-        var questions = await (await _mongoService._questions.FindAsync(_ => true)).ToListAsync();
-        var results = await (await _mongoService._results.FindAsync(p => true)).ToListAsync();
+        var questions = await (await _questions.FindAsync(_ => true)).ToListAsync();
 
-        if(results is not null)
+        var results = await (await _results.FindAsync(_ => true)).ToListAsync();
+
+        if (results != null)
         {
-            foreach( var result in results)
+            foreach (var result in results)
             {
                 var random = new Random();
 
@@ -37,45 +37,35 @@ public class QuestionManager2
                     {
                         var fileBytes = System.IO.File.ReadAllBytes($"wwwroot{question.Photo}");
                         var ms = new MemoryStream(fileBytes);
-                        Message message = await bot.SendPhotoAsync(
-                        photo: Telegram.Bot.Types.InputFile.FromStream(ms),
+                        await bot.SendPhotoAsync(
+                        photo: InputFile.FromStream(ms),
                         caption: messageText,
                         chatId: result.UserId,
-                        replyMarkup: CreateQuestionChoiceButtons());
+                        replyMarkup: CreateQuestionChoiceButtons(index));
                     }
                     else
                     {
-                        await bot.SendTextMessageAsync(result.UserId, messageText, replyMarkup: CreateQuestionChoiceButtons());
+                        await bot.SendTextMessageAsync(result.UserId, messageText, replyMarkup: CreateQuestionChoiceButtons(index));
                     }
 
-                    InlineKeyboardMarkup CreateQuestionChoiceButtons()
+                    InlineKeyboardMarkup CreateQuestionChoiceButtons(int index)
                     {
                         var choisesButtons = new List<List<InlineKeyboardButton>>();
 
-                        if (question.Choises != null)
-                        {
-                            for (int i = 0; i < question.Choises!.Count; i++)
-                            {
-                                var choiseButtons = new List<InlineKeyboardButton>()
-                                {
-                                    InlineKeyboardButton.WithCallbackData($"{question.Choises[i].Text}",
-                                    $"{question.Id},{question.Choises[i].Id}")
-                                };
-                                choisesButtons.Add(choiseButtons);
-                            }
-                        }
-                        else
+                        for (int i = 0; i < questions[index].Choises!.Count; i++)
                         {
                             var choiseButtons = new List<InlineKeyboardButton>()
                             {
-                                InlineKeyboardButton.WithCallbackData("Choises no", "?")
+                                InlineKeyboardButton.WithCallbackData($"{questions[index].Choises[i].Text}",
+                                $"{questions[index].Id},{questions[index].Choises[i].Text}")
                             };
                             choisesButtons.Add(choiseButtons);
                         }
+
                         return new InlineKeyboardMarkup(choisesButtons);
                     }
                 }
             }
-        }        
+        }
     }
 }

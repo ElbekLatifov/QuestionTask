@@ -68,7 +68,7 @@ public class QuestionsController : ControllerBase
         {
             var javob = update.Message!.Text;
 
-            await bot.SendTextMessageAsync(update.Message!.From!.Id, "For You Question in hour");
+            await bot.SendTextMessageAsync(update.Message!.From!.Id, "вопрос будет приходить вам каждый час");
 
             await questionManager.GetUser(update.Message!.From!.Id);
 
@@ -86,7 +86,9 @@ public class QuestionsController : ControllerBase
             
             string[] data = javob!.Split(',').ToArray();
 
-            await questionManager.CheckAnswer(update.CallbackQuery.From.Id, data);
+            var answer = await questionManager.CheckAnswer(update.CallbackQuery.From.Id, data);
+
+            await bot.SendTextMessageAsync(update.CallbackQuery.From.Id, answer);
         }
     }
 }

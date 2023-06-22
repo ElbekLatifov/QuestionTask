@@ -26,7 +26,7 @@ public class SendQuestionsServiceBack : BackgroundService
         while (true)
         {
             await SendMessage();
-            await Task.Delay(TimeSpan.FromMinutes(1));
+            await Task.Delay(TimeSpan.FromSeconds(3));
         }
     }
 
@@ -35,11 +35,24 @@ public class SendQuestionsServiceBack : BackgroundService
         string botToken = "6034108179:AAE0JCP4SdwliEATcogsAFFszPa8yblcEcg";
         var botClient = new TelegramBotClient(botToken);
 
-        using (var scope = _serviceProvider.CreateScope())
+        using (var scope = _serviceProvider.CreateAsyncScope())
         {
             var questionManager = scope.ServiceProvider.GetRequiredService<QuestionManager2>();
+            //var resultService = scope.ServiceProvider.GetRequiredService<ResultsService>();
+
+            //var results = await resultService.GEtResultsAsync();
             await questionManager.Get(botClient);
+
+            //if (results is not null)
+            //{
+            //    foreach (var item in results)
+            //    {
+            //    }
+            //}
         }
+        
+        
+        
     }
 
     //private async void Tick(object? sender)

@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<MongoService>();
+builder.Services.AddScoped<ResultsService>();
 builder.Services.AddScoped<QuestionManager>();
 builder.Services.AddScoped<QuestionManager2>();
 builder.Services.AddHostedService<SendQuestionsServiceBack>();
