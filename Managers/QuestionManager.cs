@@ -1,5 +1,4 @@
-﻿using Mapster;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using QuestionTask.Entities;
 using QuestionTask.Models;
 using QuestionTask.Services;
@@ -9,11 +8,9 @@ namespace QuestionTask.Managers;
 public class QuestionManager
 {
     private readonly FileService fileService;
-    //private MongoService _mongoService;
 
     public QuestionManager(FileService fileService)
     {
-        //_mongoService = mongoService;
         this.fileService = fileService;
     }
     private IMongoClient mongo = new MongoClient("mongodb://elbek:elbek@localhost:27017");

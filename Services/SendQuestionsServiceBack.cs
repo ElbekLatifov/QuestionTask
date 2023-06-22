@@ -1,13 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Driver;
-using QuestionTask.Entities;
-using QuestionTask.Managers;
-using System;
-using Telegram.Bot;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
-using InputFile = Telegram.Bot.Types.InputFile;
+﻿using Telegram.Bot;
 
 namespace QuestionTask.Services;
 
@@ -26,7 +17,7 @@ public class SendQuestionsServiceBack : BackgroundService
         while (true)
         {
             await SendMessage();
-            await Task.Delay(TimeSpan.FromSeconds(3));
+            await Task.Delay(TimeSpan.FromHours(1));
         }
     }
 
@@ -38,21 +29,9 @@ public class SendQuestionsServiceBack : BackgroundService
         using (var scope = _serviceProvider.CreateAsyncScope())
         {
             var questionManager = scope.ServiceProvider.GetRequiredService<QuestionManager2>();
-            //var resultService = scope.ServiceProvider.GetRequiredService<ResultsService>();
 
-            //var results = await resultService.GEtResultsAsync();
             await questionManager.Get(botClient);
-
-            //if (results is not null)
-            //{
-            //    foreach (var item in results)
-            //    {
-            //    }
-            //}
         }
-        
-        
-        
     }
 
     //private async void Tick(object? sender)

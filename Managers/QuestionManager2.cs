@@ -45,27 +45,28 @@ public class QuestionManager2
                     }
                     else
                     {
-                        await bot.SendTextMessageAsync(result.UserId, messageText, replyMarkup: CreateQuestionChoiceButtons(index));
+                        await bot.SendTextMessageAsync(result.UserId, messageText, 
+                            replyMarkup: CreateQuestionChoiceButtons(index));
                     }
+                }
+            }
+        }
 
-                    InlineKeyboardMarkup CreateQuestionChoiceButtons(int index)
-                    {
-                        var choisesButtons = new List<List<InlineKeyboardButton>>();
+        InlineKeyboardMarkup CreateQuestionChoiceButtons(int index)
+        {
+            var choisesButtons = new List<List<InlineKeyboardButton>>();
 
-                        for (int i = 0; i < questions[index].Choises!.Count; i++)
-                        {
-                            var choiseButtons = new List<InlineKeyboardButton>()
+            for (int i = 0; i < questions[index].Choises!.Count; i++)
+            {
+                var choiseButtons = new List<InlineKeyboardButton>()
                             {
                                 InlineKeyboardButton.WithCallbackData($"{questions[index].Choises[i].Text}",
                                 $"{questions[index].Id},{questions[index].Choises[i].Text}")
                             };
-                            choisesButtons.Add(choiseButtons);
-                        }
-
-                        return new InlineKeyboardMarkup(choisesButtons);
-                    }
-                }
+                choisesButtons.Add(choiseButtons);
             }
+
+            return new InlineKeyboardMarkup(choisesButtons);
         }
     }
 }
